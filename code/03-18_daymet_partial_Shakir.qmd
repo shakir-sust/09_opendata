@@ -189,12 +189,17 @@ We just pulled daily weather data for one site and one year. Great!
 
 Now we just need to do that again for the remaining **697** site-years!  
 
+
+
 # Daymet - all site-years  
 For that, let's use the **map()** family of functions from the purrr package.  
 
 **WARNING**: the chunk below took about **3 minutes** to run on my laptop.  
 
 ```{r}
+
+#Iteration workflow creation (very very important)
+
 daymet_all <- field %>%
   mutate(weather = pmap(list(.y = year,
                              .site = site,
@@ -214,19 +219,31 @@ daymet_all <- field %>%
                                  )
                         ))
 
+head(daymet_all)
+
 ```
 
 Let's inspect weather data for the first site-year.  
 
 ```{r}
 
+daymet_all$weather[[1]]
+
 ```
 
-Now let's unnest the weather column.  
+Now let's unnest the weather column. 
+
 ```{r}
-daymet_all_unnest 
+
+daymet_all_unnest <- daymet_all %>%
+  unnest(weather) %>% #To unnest the data frames inside each cells of weather column into the main data frame
+  pivot_wider(names_from = measurement,
+              values_from = value) %>%
+  janitor::clean_names()
 
 daymet_all_unnest
+
+#698 site years * 365 days in a year = 254,770 rows
 
 ```
 
@@ -239,6 +256,10 @@ Therefore, a best practice here is to pull weather data once and export it to fi
 
 Let's do that below:  
 ```{r}
+
+write_csv(daymet_all_unnest,
+          "../data/fieldweatherdata.csv"
+          )
 
 ```
 
