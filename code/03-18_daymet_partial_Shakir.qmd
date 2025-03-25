@@ -266,7 +266,8 @@ write_csv(daymet_all_unnest,
 
 # Summary  
 In this exercise, we:  
-  - Used year, longitude, and latitude to pull daily weather data from Daymet  
+  - Used year, longitude, and latitude to pull daily w
+  eather data from Daymet  
   - Wrote code to automate and iterate this process for 698 site-years  
   - Exported the data for future reuse  
 
