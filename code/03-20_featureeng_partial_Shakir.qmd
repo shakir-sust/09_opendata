@@ -180,7 +180,13 @@ Now, what if we wanted to have month as part of the column name instead?
 ```{r fe_month_sum_wide}
 
 fe_month_sum_wide <- fe_month_sum %>%
+  pivot_longer(cols = mean_dayl.s:sum_prcp.mm) %>%
+  mutate(varname = paste0(name, "_", month_abb)) %>%
+  dplyr::select(-name, -month_abb) %>% #To remove "name" and "month_abb" columns so that we do not get any "NA"
+  pivot_wider(names_from = varname,
+              values_from = value) %>%
   # Rounding to one decimal point
+  mutate(across(c(3:75), ~round(., 1) )) #alternatively: mutate(across(c(3:ncol(.)), ~round(., 1) )) #across(): to select the columns from 3 to 75 to perform rounding across these columns #round each of the column to 1 decimal place
 
 fe_month_sum_wide  
 
@@ -194,16 +200,46 @@ Let's explore our newly engineered variables.
 # EDA round 2  
 Let's make a ridge plot to visualize the distribution of one variable over months.  
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
+
 #install.packages("ggridges")
-library(ggridges)
+library(ggridges) #really powerful package to plot distributions e.g., density plot
+
+ggplot(data = fe_month_sum,
+       aes(x = mean_tmax.c,
+           y = month_abb,
+           fill = stat(x)
+           )
+       ) +
+  geom_density_ridges_gradient(scale = 3,
+                               rel_min_height = 0.01) + #cuts down the tails of the distribution
+  scale_fill_viridis_c(option = "C") + #viridis: color-blind-friendly color scale
+  theme(legend.position = "none") #we use theme() to remove legends
 
 
 ```
 
 Now let's do that for all variables.  
 ```{r}
-finalplots 
+
+finalplots <- fe_month_sum %>%
+  pivot_longer(mean_dayl.s:sum_prcp.mm) %>%
+  group_by(name) %>%
+  nest() %>%
+  mutate(plot = map2(data, name,
+                     ~ ggplot( data = .x,
+       aes(x = value,
+           y = month_abb,
+           fill = stat(x)
+           )
+       ) +
+  geom_density_ridges_gradient(scale = 3,
+                               rel_min_height = 0.01) + 
+  scale_fill_viridis_c(option = "C") + 
+  theme(legend.position = "none") +
+  labs(x = .y) # .y is the placeholder for map2() function
+                     )) 
+  
   
   
 ```
@@ -216,8 +252,10 @@ finalplots$plot
 
 # Exporting  
 ```{r}
+
 write_csv(fe_month_sum_wide,
           "../data/weather_monthsum.csv")
+
 ```
 
 # Summary  
