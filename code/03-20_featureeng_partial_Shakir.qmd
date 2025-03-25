@@ -156,7 +156,7 @@ fe_month_sum <- fe_month %>%
 
 fe_month_sum
 
-#8,376 rows = 698 site-years x 12 months
+#8,376 rows = 698 site-years x 12 months (of a year)
 
 ```
 
@@ -181,12 +181,12 @@ Now, what if we wanted to have month as part of the column name instead?
 
 fe_month_sum_wide <- fe_month_sum %>%
   pivot_longer(cols = mean_dayl.s:sum_prcp.mm) %>%
-  mutate(varname = paste0(name, "_", month_abb)) %>%
-  dplyr::select(-name, -month_abb) %>% #To remove "name" and "month_abb" columns so that we do not get any "NA"
+  mutate(varname = paste0(name, "_", month_abb)) %>% #To create a new column "varname" which contains the combination of "name" and "month_abb"
+  dplyr::select(-name, -month_abb) %>% #To remove "name" and "month_abb" columns so that we do not get any "NA" when we pivot_wider()
   pivot_wider(names_from = varname,
               values_from = value) %>%
   # Rounding to one decimal point
-  mutate(across(c(3:75), ~round(., 1) )) #alternatively: mutate(across(c(3:ncol(.)), ~round(., 1) )) #across(): to select the columns from 3 to 75 to perform rounding across these columns #round each of the column to 1 decimal place
+  mutate(across(c(3:75), ~round(., 1) )) #"mutate(across(c(3:75), ~round(., 1) ))": To round all columns except year and site to 1 decimal place #across() function has 2 arguments: the 1st argument "c(3:75)" is to select the position of columns on which the rounding will be applied; the 2nd argument "~round(., 1) " is to indicate the decimal place to be rounded for; "." is used to represent all those selected columns i.e., we are saying that round each of the selected columns to 1 decimal places #alternatively: mutate(across(c(3:ncol(.)), ~round(., 1) )) #alternatively: mutate(across(3:75), ~round(., 1) )); mutate(across(3:ncol(.), ~round(., 1) )); mutate(across(c(strength_gtex:sum_prcp.mm_Dec), ~round(., 1) ))
 
 fe_month_sum_wide  
 
@@ -208,26 +208,26 @@ library(ggridges) #really powerful package to plot distributions e.g., density p
 ggplot(data = fe_month_sum,
        aes(x = mean_tmax.c,
            y = month_abb,
-           fill = stat(x)
+           fill = stat(x) #fill = stat(x): specific to "ggridges"
            )
        ) +
   geom_density_ridges_gradient(scale = 3,
-                               rel_min_height = 0.01) + #cuts down the tails of the distribution
-  scale_fill_viridis_c(option = "C") + #viridis: color-blind-friendly color scale
-  theme(legend.position = "none") #we use theme() to remove legends
-
+                               rel_min_height = 0.01) + #"the 2nd argument is"rel_min_height = 0.01": to cut down the tails of the distribution
+  scale_fill_viridis_c(option = "C") + #"viridis"scale_fill_viridis_c()": color-blind-friendly color scale #argument (option = "C") to change the color to magma option; "option = " varies from A to F
+  theme(legend.position = "none") #"theme(legend.position = "none")": to remove legends
 
 ```
 
-Now let's do that for all variables.  
+Now let's do that for all variables [ we will automate using map2() to conduct iteration ]
+
 ```{r}
 
 finalplots <- fe_month_sum %>%
   pivot_longer(mean_dayl.s:sum_prcp.mm) %>%
   group_by(name) %>%
-  nest() %>%
-  mutate(plot = map2(data, name,
-                     ~ ggplot( data = .x,
+  nest() %>% #combo of "group_by()" and "nest()"
+  mutate(plot = map2(data, name, #map2() takes 2 arguments: the 1st argument becomes .x, the 2nd argument becomes .y #we must use map2() with a mutate() at first for iteration #"map2(data, name" : we want to iterate over "name" for "data"
+                     ~ ggplot( data = .x, # .x represent "data" in the map2() function, so we need to use data = .x [= "data" from map2() ] to feed the "data" from map2() function as the data of ggplot() #.x is the iterating column of map2() that is a place holder for the 1st argument of map2()
        aes(x = value,
            y = month_abb,
            fill = stat(x)
@@ -237,17 +237,18 @@ finalplots <- fe_month_sum %>%
                                rel_min_height = 0.01) + 
   scale_fill_viridis_c(option = "C") + 
   theme(legend.position = "none") +
-  labs(x = .y) # .y is the placeholder for map2() function
+  labs(x = .y) #to rename the x-axis as the variable name # .y is the placeholder for "name" i.e., variable name in map2() function
                      )) 
   
-  
-  
+finalplots
+
 ```
 
 ```{r}
 #| message: false
 
-finalplots$plot
+finalplots$plot #$plot to print all the ggplots for each variable
+
 ```
 
 # Exporting  
