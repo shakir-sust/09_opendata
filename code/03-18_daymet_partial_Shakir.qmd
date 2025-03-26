@@ -173,17 +173,28 @@ daymet_one <- download_daymet(site = field$site[[1]],
                               )
 
 daymet_one
+
+#2,555 rows because the 1st 365 days are about day length, then it resets the 2nd set of 365 days for precipitation, then it again resets the next set of 365 days for all the weather variables that are under the "measurement" column
+
+#To get separate columns for all weather variables for 365 days, we will pivot_wider() [next code chunk]
+
 ```
 
 How many rows above? Why?  
 
 ```{r}
+
+#To get separate columns for all weather variables for 365 days, we will pivot_wider() 
+
 daymet_one %>%
   pivot_wider(names_from = measurement,
               values_from = value
               )
+
 ```
 How many rows above? Why?  
+
+Answer: 365 rows because we did pivot_wider() for the "measurement" column for 365 days, which created separate columns for all weather variablws for these 365 days
 
 We just pulled daily weather data for one site and one year. Great!  
 
@@ -201,7 +212,7 @@ For that, let's use the **map()** family of functions from the purrr package.
 #Iteration workflow creation (very very important)
 
 daymet_all <- field %>%
-  mutate(weather = pmap(list(.y = year,
+  mutate(weather = pmap(list(.y = year, 
                              .site = site,
                              .lat = lat,
                              .lon = lon),
@@ -217,9 +228,9 @@ daymet_all <- field %>%
                           rename(.year = year,
                                  .site = site
                                  )
-                        ))
+                        )) #using pmap() to iterate over all 697 site-years
 
-head(daymet_all)
+head(daymet_all) #To look at the 1st 6 rows
 
 ```
 
@@ -236,18 +247,20 @@ Now let's unnest the weather column.
 ```{r}
 
 daymet_all_unnest <- daymet_all %>%
-  unnest(weather) %>% #To unnest the data frames inside each cells of weather column into the main data frame
+  unnest(weather) %>% #To unnest the data frames inside all cells of weather column into the main data frame
   pivot_wider(names_from = measurement,
-              values_from = value) %>%
+              values_from = value) %>% #we want to change the "measurement" column from long form to wide form
   janitor::clean_names()
 
 daymet_all_unnest
 
-#698 site years * 365 days in a year = 254,770 rows
+#254,770 rows = 698 site years * 365 days (in a year) 
 
 ```
 
 How many rows? Why?  
+
+Answer: 254,770 rows = 698 site years * 365 days (in a year) 
 
 # Exporting  
 We don't want to have to make an API call every time we'll work with this weather data.  
@@ -266,8 +279,7 @@ write_csv(daymet_all_unnest,
 
 # Summary  
 In this exercise, we:  
-  - Used year, longitude, and latitude to pull daily w
-  eather data from Daymet  
+  - Used year, longitude, and latitude to pull daily weather data from Daymet  
   - Wrote code to automate and iterate this process for 698 site-years  
   - Exported the data for future reuse  
 
@@ -277,9 +289,9 @@ There are MANY open-source data APIs relevant for agriculture applications, most
 Some of the ones I used in the past:  
   - **USDA NASS crop statistics**: https://cran.r-project.org/web/packages/rnassqs/vignettes/rnassqs.html  
   - Soil properties:  
-    - **POLARIS**: https://github.com/lhmrosso/XPolaris  
-    - **Soilsgrid**: https://rpubs.com/ials2un/soilgrids_webdav  
-    - **SSURGO**: https://search.r-project.org/CRAN/refmans/FedData/html/get_ssurgo.html    
+    - **POLARIS**: https://github.com/lhmrosso/XPolaris  [USA level]
+    - **Soilsgrid**: https://rpubs.com/ials2un/soilgrids_webdav  [Whole world level]
+    - **SSURGO**: https://search.r-project.org/CRAN/refmans/FedData/html/get_ssurgo.html  [SSURGO: USDA Web Soil Survey Online]    
   - **Soil water**: https://leombastos.github.io/bastoslab/teaching/2023-aghack-vwc/2023-aghack-vwc.html     
   - **Drought monitor**: https://droughtmonitor.unl.edu/DmData/DataDownload/WebServiceInfo.aspx    
   - **Remote sensing**: https://github.com/bevingtona/planetR  
