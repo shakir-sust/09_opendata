@@ -14,8 +14,8 @@ In these cases, we can use these original predictor variables to derive new, mor
 # Learning objectives  
 Our learning objectives are to:  
 
-  - Apply feature engineering concepts to Daymet daily weather data  
-  - Export the feature-engineered data set for further use 
+  - Apply feature engineering concepts to Daymet daily weather data    
+  - Export the feature-engineered data set for further use   
 
 # Setup  
 ```{r}
@@ -29,24 +29,30 @@ library(tidyverse)
 ```
 
 ```{r}
+
 fieldweather <- read_csv("../data/fieldweatherdata.csv")
 
 fieldweather
+
 ```
 
-Our data set contains **254,770** rows comprised by **698** site-years and **365** days/site-year worth of weather data.  
+Our data set contains **254,770** rows (= 698 site-years x 365 days/site-year) comprised by **698** site-years and **365** days/site-year worth of weather data.  
 
 # EDA  
+
 ```{r}
+
 summary(fieldweather)
+
 ```
 
-If a dataframe/ variable has data that is normally distributed, the mean and median would be very similar/ pretty close to each other.
+If a dataframe/ variable has data that is normally distributed, the mean and median would be very similar/ pretty close to each other.  
 
-If we have a right-skewed distribution, the median > mean (because mean is sensitive to outliers, but median is NOT sensitive to outliers)
+If we have a right-skewed distribution, the median > mean (because mean is sensitive to outliers, but median is NOT sensitive to outliers)  
 
 
 Let's create some density plots to explore the weather data distributions.  
+
 ```{r}
 
 fieldweather %>%
@@ -58,7 +64,9 @@ fieldweather %>%
 ```
 
 # Feature engineering  
-Let's take another look at the data at hand:
+
+Let's take another look at the data at hand:  
+
 ```{r}
 
 fieldweather
@@ -73,7 +81,7 @@ Rather, plants respond to the cumulative effects of weather across many days.
 
 How could we use this understanding to create new features from the current ones?    
 
-One option is "Growing degree days"
+One option is "Growing degree days" based on temperature data.
 
 ## Quiz - go to eLC  
 
@@ -85,7 +93,7 @@ There are **two components** that we can consider when feature engineering weath
   - Weekly  
   - Monthly  
   - Every 2 months  
-  - Growing season  
+  - (Entire) Growing season  
   - Based on crop growth stages  
   - Other?  
   
@@ -110,24 +118,25 @@ A great package to work with dates and times in R is called **lubridate**, see v
 Next, let's create a column containing the month information.  
 
 ```{r fe_month}
+
 fe_month <- fieldweather %>%
   # Selecting needed variables
   dplyr::select(year, site, lat, lon,
                 strength_gtex,
                 yday,
-                dayl.s = dayl_s, #to rename variable name from "dayl_s" to dayl.s 
-                prcp.mm = prcp_mm_day, #to rename variable name
-                srad.wm2 = srad_w_m_2,#to rename variable name
-                tmax.c = tmax_deg_c, #to rename variable name
-                tmin.c = tmin_deg_c,#to rename variable name
-                vp.pa = vp_pa #to rename variable name
+                dayl.s = dayl_s, #to rename variable name from "dayl_s" to dayl.s
+                prcp.mm = prcp_mm_day, #to rename variable name to "prcp.mm"
+                srad.wm2 = srad_w_m_2,#to rename variable name to "srad.wm2"
+                tmax.c = tmax_deg_c, #to rename variable name to "tmax.c"
+                tmin.c = tmin_deg_c,#to rename variable name to "tmin.c"
+                vp.pa = vp_pa #to rename variable name to "vp.pa"
                 ) %>%
   # Creating a date class variable  
-  mutate(date_chr = paste0(year, "/", yday)) %>% #The format of "date_chr" is "chr", we will change it to "date" format
-  mutate(date = as.Date(date_chr, "%Y/%j")) %>%
+  mutate(date_chr = paste0(year, "/", yday)) %>% #The format of "date_chr" is "chr", we will change it to "date" format in the next line
+  mutate(date = as.Date(date_chr, "%Y/%j")) %>% #"%Y/%j" because we used "/" in paste0(year, "/", yday) at the previous line #Date-related documnetation details: https://www.r-bloggers.com/2013/08/date-formats-in-r/
   # Extracting month from date  
-  mutate(month = month(date)) %>% #month is in "dbl" (double) format
-  mutate(month_abb = month(date, label = T)) #month_abb is in "ord" (ordinal) format
+  mutate(month = month(date)) %>% #the 1st "month" inside mutate is to name the new column, the 2nd "month" after = sign is the month() function from lubridate package #month is in "dbl" (double) format
+  mutate(month_abb = month(date, label = T)) #To get abbreviated month name e.g., Jan, Feb, Mar,...,Dec #month_abb is in "ord" (ordinal) format
 
 
 fe_month
@@ -135,6 +144,7 @@ fe_month
 ```
 
 Now, let's summarize daily weather variables based on month.  
+
 ```{r fe_month_sum}
 
 fe_month_sum <- fe_month %>%
