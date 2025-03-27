@@ -148,13 +148,14 @@ Now, let's summarize daily weather variables based on month.
 ```{r fe_month_sum}
 
 fe_month_sum <- fe_month %>%
-  group_by(year, site, month_abb, strength_gtex) %>%
+  group_by(year, site, month_abb, strength_gtex) %>% #If we do a summarise() after group_by(), any column that's not in the group_by() is gone, so we need to include "strength_gtex" in the group_by() to include it in the data frame because "strength_gtex" is our response variable so we must keep it in the data frame 
+  #Because we are gonna be applying a "summarize()" function to different columns, we are gonna use a function called "across()" 
   summarise(across(.cols = c(dayl.s,
                              srad.wm2,
                              tmax.c,
                              tmin.c,
                              vp.pa),
-                   .fns = mean,
+                   .fns = mean, #do not indicate the actual function "mean()", just use the word "mean"
                    .names = "mean_{.col}"), #1st across() is summarizing mean
             across(.cols = prcp.mm,
                    .fns = sum,
@@ -172,7 +173,7 @@ fe_month_sum
 
 8,376 rows because 698 site-years x 12 months.  
 
-Let's check tmax.c and prcp.mm for the first site-year and month.  
+Let's check tmax.c and prcp.mm for the first site-year and month. [the following code chunk is to make sure we did everything okay that we intended] 
 
 ```{r}
 
@@ -182,6 +183,7 @@ fe_month %>%
            month_abb == "Jan") %>%
   summarise(tmax.c = mean(tmax.c),
             prcp.mm = sum(prcp.mm))
+
 
 ```
 
