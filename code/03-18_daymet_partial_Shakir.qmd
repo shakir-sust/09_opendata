@@ -255,13 +255,12 @@ daymet_all <- field %>% #we start with our dataframe which is "field"
                             lat = .lat, #specifying ".lat" placeholder for "lat = " argument
                             lon = .lon, #specifying ".lon" placeholder for "lon = " argument
                             start = .y, #specifying ".y" (placeholder for "year") for "start = " argument (for starting year)
-                            end = .y, #specifying ".y" (placeholder for "year") for "start = " argument (for end year, which will always be the same as the start year)
+                            end = .y, #specifying ".y" (placeholder for "year") for "start = " argument (for end year, which will always be the same as the start year) # we are giving the same year as "start" and "end" because that's how the function understands it
                             simplify = T,
-                            silent = T) %>%
+                            silent = T) %>% #end of " download_daymet()" function
                           rename(.year = year,
-                                 .site = site
-                                 ) 
-                        )) #We use "download_daymet()" to download weather data in batch from "Daymet" database #using pmap() to iterate over all 697 site-years
+                                 .site = site) #we always rename the "year" and "site" because if we don't do that, daymet() will give us 2 conflicting columns which we don't want #so, this is a very important wrangling step 
+                        )) #We use "download_daymet()" to download weather data in batch from "Daymet" database #we use "pmap()" to iterate over all 697 site-years
 
 head(daymet_all) #To look at the 1st 6 rows
 
