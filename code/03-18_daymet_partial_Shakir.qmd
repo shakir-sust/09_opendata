@@ -64,6 +64,8 @@ field
 
 ```
 
+In the output, latitude and longitude are the 2 geospatial columns that we need to place anything in space. 
+
 # Study description  
 
 This data set comprises a study conducted across the Cotton Belt producing region of the US (from GA to CA) from 1980 to 2020.
