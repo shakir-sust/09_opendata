@@ -118,24 +118,33 @@ So, 65 unique sites across 48 unique years for a total of 698  (= 65 x 48) site 
 
 What is the statistical distribution of fiber strength?  
 
+Note: We use "geom_density()" to obtain distribution of a given variable in the form of density plot.
+geom_density() gives us the outline of the distribution, but don't indicate where the points exist.
+In order to get that, we can use geom_rug() which adds a vertical bar at the bottom of the density plot created by geom_density() to indicate where each observation has happened.
+
 ```{r fiber strength}
 
+#we use "geom_density()" to obtain distribution of a given variable in the form of density plot
+
 ggplot(data = field) +
-  geom_density(aes(x = strength_gtex)) + #to get a density plot
-  geom_rug(aes(x = strength_gtex))
+  geom_density(aes(x = strength_gtex)) + #to get a density plot for "strength_gtex" [here we don't need a y variable because y is calculated by "geom_density()"]
+  geom_rug(aes(x = strength_gtex)) #adds a vertical bar at the bottom of the geom_density() to where each observation has happened.
 
 ```
+Looking at the density plot, the mean is around 30 [from the summary output, "Mean: 30.37" for "strength_gtex"].
+
+Creating a map of USA and adding points to understand the spatial distribution of the dataset we are using:
 
 ```{r create map of USA and add points}
 
 #select() works on columns
 #filter() works on rows
 
-states <- us_states() %>%
-  filter( !(state_abbr %in% c("PR", "AK", "HI")) ) #we use "%in%" to filter more than one entry #to keep all states that are NOT "PR", "AK", and "HI"
+states <- us_states() %>% # "us_states()" function comes from "USboundaries" package: returns a "simple feature" or "sf" object, which is a geospatial object in R
+  filter( !(state_abbr %in% c("PR", "AK", "HI")) ) #to remove "PR" (Puerto Rico), "AK" (Alaska), and "HI" (Hawaii) i.e., to keep all states that are NOT "PR", "AK", and "HI" #we use "%in%" to filter more than one entry 
   
 ggplot() +
-  geom_sf(data = states) +
+  geom_sf(data = states) + #"geom_sf()" is used to plot "sf" object, which we just created above as "states" object; plots all states and territories of USA
   geom_point(data = field,
              aes(x = lon,
                  y = lat)
