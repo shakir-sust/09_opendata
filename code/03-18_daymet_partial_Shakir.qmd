@@ -259,7 +259,7 @@ daymet_all <- field %>% #we start with our dataframe which is "field"
                             simplify = T,
                             silent = T) %>% #end of " download_daymet()" function
                           rename(.year = year,
-                                 .site = site) #we always rename the "year" and "site" because if we don't do that, daymet() will give us 2 conflicting columns which we don't want #so, this is a very important wrangling step 
+                                 .site = site) #we always rename the "year" and "site" because if we don't rename year and site, daymet() will give us 2 conflicting columns [one "year" for our data, another "year" for daymet data; similarly, one "site" for our data, another "site" for "daymet" data], which we don't want #so, this is a very important wrangling step 
                         )) #We use "download_daymet()" to download weather data in batch from "Daymet" database #we use "pmap()" to iterate over all 697 site-years
 
 head(daymet_all) #To look at the 1st 6 rows
