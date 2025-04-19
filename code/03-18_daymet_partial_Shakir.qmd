@@ -85,6 +85,8 @@ The data contains the following columns:
 ```{r}
 summary(field)
 ```
+*For USA:* latitude would have to be positive numbers because we are above the equator, and longitude would have to be negative number because we are to the west of the Greenwich line. So, always look at the summary of the geospatial data (i.e., latitude and longitude) to make sure that the current data that we are working on makes sense.  
+
 How many unique years?
 
 ```{r unique years}
