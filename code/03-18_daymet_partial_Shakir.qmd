@@ -266,6 +266,8 @@ head(daymet_all) #To look at the 1st 6 rows
 
 ```
 
+The "weather" column in the output is a nested column (i.e., the "weather" column contains a dataframe e.g., tibble instead of just 1 single value)
+
 Let's inspect weather data for the first site-year.  
 
 ```{r}
@@ -279,10 +281,10 @@ Now let's unnest the weather column.
 ```{r}
 
 daymet_all_unnest <- daymet_all %>%
-  unnest(weather) %>% #To unnest the data frames inside all cells of weather column into the main data frame
-  pivot_wider(names_from = measurement,
-              values_from = value) %>% #we want to change the "measurement" column from long form to wide form
-  janitor::clean_names()
+  unnest(weather) %>% #To unnest the "weather" column i.e., to unnest the "tibble" dataframes inside all of the cells of the "weather" column and then to bring them back into the main level of the data frame
+  pivot_wider(names_from = measurement, #to pivot wide the names from the "measurement" column
+              values_from = value) %>% #to pivot wide the values from the "value" column #because we want to change the "measurement" column from long form to wide form
+  janitor::clean_names() #to clean and standardize the column names with all lower cases and underscores to fill within words 
 
 daymet_all_unnest
 
@@ -295,6 +297,9 @@ How many rows? Why?
 Answer: 254,770 rows = 698 site years * 365 days (in a year) 
 
 # Exporting  
+
+[Note: Every time we pull open source data, it is highly recommended to export the data as a .csv file]
+
 We don't want to have to make an API call every time we'll work with this weather data.  
 
 Therefore, a best practice here is to pull weather data once and export it to file so we can reuse it any time without having to download again.  
