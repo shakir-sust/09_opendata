@@ -22,20 +22,29 @@ Our learning objectives are to:
 
 # Setup  
 
+Important Note: CRAN is like the app store for R packages. Everytime we use "install.packages()", we use CRAN as the source of that package. However, some people may not want to submit a package in CRAN, instead make it available through GitHub. If we want to install a package through GitHub, we cannot use "install.packages()" because "install.packages()" feeds from CRAN (CRAN is the official R package app store). In order to install packages from GitHub, we use "remotes::install_github()" [and not "install.packages()"].
+
 ```{r}
 #| message: false
 #| warning: false
 
-#install.packages("sf")
-#install.packages("daymetr")
-#install.packages("remotes") #To install R packages that are not available on CRAN, and available on GitHub
-#remotes::install_github("ropensci/USAboundaries") #"remotes::install_github()"To install packages from GitHub
+#install.packages("sf") #to manipulate vector geospatial files
+#install.packages("daymetr") #to retrieve data from daymet database website through R
+#install.packages("remotes") #to install R packages that are not available on CRAN, and available on GitHub
+#remotes::install_github("ropensci/USAboundaries") 
 #remotes::install_github("ropensci/USAboundariesData")
 
-library(tidyverse)
-library(USAboundaries) # for US state boundaries
+#Note: CRAN is like the app store for R packages. Everytime we use "install.packages()", we use CRAN as the source of that package. However, some people may not want to submit a package in CRAN, instead make it available through GitHub. If we want to install a package through GitHub, we cannot use "install.packages()" because "install.packages()" feeds from CRAN (CRAN is the official R package app store). In order to install packages from GitHub, we use "remotes::install_github()" [and not "install.packages()"].
+
+
+library(tidyverse) #need to load "tidyverse" package at first
+
 library(sf) # for US map #to manipulate vector geo-spatial points
-library(daymetr)
+library(daymetr) #to retrieve data from daymet database website through R
+library(remotes)
+library(USAboundaries) # for US state boundaries
+library(USAboundariesData)
+
 ```
 
 
