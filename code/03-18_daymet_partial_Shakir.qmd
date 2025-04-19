@@ -226,16 +226,17 @@ daymet_one %>%
 ```
 How many rows above? Why?  
 
-Answer: 365 rows because we did pivot_wider() for the "measurement" column for 365 days, which created separate columns for all weather variablws for these 365 days
+Answer: 365 rows because we did pivot_wider() for the "measurement" column for 365 days, which created separate columns for all weather variables for these 365 days
 
 We just pulled daily weather data for one site and one year. Great!  
 
 Now we just need to do that again for the remaining **697** site-years!  
 
-
-
 # Daymet - all site-years  
+
 For that, let's use the **map()** family of functions from the purrr package.  
+
+We will use `pmap` to download the weather data for all 698 site-years and save in "daymet_all" object (just in 1 code, using iteration).
 
 **WARNING**: the chunk below took about **3 minutes** to run on my laptop.  
 
@@ -243,24 +244,24 @@ For that, let's use the **map()** family of functions from the purrr package.
 
 #Iteration workflow creation (very very important)
 
-daymet_all <- field %>%
-  mutate(weather = pmap(list(.y = year, 
-                             .site = site,
-                             .lat = lat,
-                             .lon = lon),
-                        function(.y, .site, .lat, .lon)
-                          download_daymet(
-                            site = .site,
-                            lat = .lat,
-                            lon = .lon,
-                            start = .y,
-                            end = .y,
+daymet_all <- field %>% #we start with our dataframe which is "field"
+  mutate(weather = pmap(list(.y = year, # .y is the place holder for "year" #after the = sign of .y, we must specify the actual name of the column [which is very important] # .y is what we decide to name the place holder; we can use anything to name this place holder(e.g., .year) , but we usually name these place holders as .[column_name] to avoid complexity down the road
+                             .site = site, # .site is the place holder for "site"
+                             .lat = lat, # .lat is the place holder for "lat"
+                             .lon = lon), # .lon is the place holder for "lon" #notice that the comma " , " is after the 1st bracket " ) " to close the "list()" function
+                        function(.y, .site, .lat, .lon) #Inside "function()", we specify the place holder names that we used inside the "list()" function
+                          download_daymet( 
+                            site = .site, #specifying ".site" placeholder for "site = " argument
+                            lat = .lat, #specifying ".lat" placeholder for "lat = " argument
+                            lon = .lon, #specifying ".lon" placeholder for "lon = " argument
+                            start = .y, #specifying ".y" (placeholder for "year") for "start = " argument (for starting year)
+                            end = .y, #specifying ".y" (placeholder for "year") for "start = " argument (for end year, which will always be the same as the start year)
                             simplify = T,
                             silent = T) %>%
                           rename(.year = year,
                                  .site = site
-                                 )
-                        )) #using pmap() to iterate over all 697 site-years
+                                 ) 
+                        )) #We use "download_daymet()" to download weather data in batch from "Daymet" database #using pmap() to iterate over all 697 site-years
 
 head(daymet_all) #To look at the 1st 6 rows
 
