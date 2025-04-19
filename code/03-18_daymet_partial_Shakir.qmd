@@ -91,30 +91,37 @@ How many unique years?
 
 ```{r unique years}
 
-unique(field$year) %>%
-  length()
+unique(field$year) %>% #gives a list
+  length() #gives the exact number of unique years
 
 ```
 
 41 distinct years in the data set.  
 
 Now, how many unique sites?  
+
 ```{r unique sites}
 
+unique(field$site) %>% #gives a list
+  length() #gives the exact number of unique sites
+
+#To widen our R knowledge, we will use a different function now 
 field %>%
-  distinct(site) %>% #tidyverse package
+  distinct(site) %>% #Returns a tibble because it is a tidyverse package
   nrow() #returns number of rows
 
 ```
 
 65 unique sites.  
 
+So, 65 unique sites across 48 unique years for a total of 698  (= 65 x 48) site year combinations in this dataset.
+
 What is the statistical distribution of fiber strength?  
 
 ```{r fiber strength}
 
 ggplot(data = field) +
-  geom_density(aes(x = strength_gtex)) +
+  geom_density(aes(x = strength_gtex)) + #to get a density plot
   geom_rug(aes(x = strength_gtex))
 
 ```
