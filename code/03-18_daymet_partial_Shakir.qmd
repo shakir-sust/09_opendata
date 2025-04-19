@@ -172,7 +172,7 @@ Data characteristics:
     - minimum air temperature (C)  
     - water vapor pressure (Pa)  
 
-Daymet provides an application programing interface (API) for users to make queries and download data.  
+Daymet provides an "Application Programming Interface" (API) for users to make queries and download data.  
 
 In R, we'll use a package called `daymetr` that facilitates makeing queries to Daymet API.  
 
@@ -183,26 +183,28 @@ help("download_daymet")
 
 ```
 
-From the documentation, we see we need to provide:  
+From the documentation, we see we need to provide the following to parse weather data from daymet:  
   - latitude (we have it)  
   - longitude (we have it)  
   - start and end of year to download (we have it)  
   
 Let's try it with the first site-year on the data frame.  
 
-# Daymet - one site-year  
+# Daymet - one site-year  [downloading weather data from "Daymet" for only 1 site and 1 year]  
+
 ```{r one site-year}
+
 field
 
-daymet_one <- download_daymet(site = field$site[[1]],
+daymet_one <- download_daymet(site = field$site[[1]], #we used [[1]] to get weather data just for the 1st site
                               lat = field$lat[[1]],
                               lon = field$lon[[1]],
                               start = field$year[[1]],
-                              end = field$year[[1]],
+                              end = field$year[[1]], #we specify the same year that we specifed in "start"
                               simplify = T #to get tidyverse friendly data
                               )
 
-daymet_one
+daymet_one #"daymet_one" is the object we have used to store weather data for only 1 site and 1 year
 
 #2,555 rows because the 1st 365 days are about day length, then it resets the 2nd set of 365 days for precipitation, then it again resets the next set of 365 days for all the weather variables that are under the "measurement" column
 
