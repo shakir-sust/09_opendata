@@ -324,15 +324,15 @@ In this exercise, we:
 There are MANY open-source data APIs relevant for agriculture applications, most of which have an R implementation.  
 
 Some of the ones I used in the past:  
-  - **USDA NASS crop statistics**: https://cran.r-project.org/web/packages/rnassqs/vignettes/rnassqs.html  
+  - **USDA NASS (= National Agricultural Statistical Service) crop statistics**: https://cran.r-project.org/web/packages/rnassqs/vignettes/rnassqs.html  
   - Soil properties:  
     - **POLARIS**: https://github.com/lhmrosso/XPolaris  [USA level]
     - **Soilsgrid**: https://rpubs.com/ials2un/soilgrids_webdav  [Whole world level]
     - **SSURGO**: https://search.r-project.org/CRAN/refmans/FedData/html/get_ssurgo.html  [SSURGO: USDA Web Soil Survey Online]    
   - **Soil water**: https://leombastos.github.io/bastoslab/teaching/2023-aghack-vwc/2023-aghack-vwc.html     
   - **Drought monitor**: https://droughtmonitor.unl.edu/DmData/DataDownload/WebServiceInfo.aspx    
-  - **Remote sensing**: https://github.com/bevingtona/planetR  
-  - **Elevation**: https://github.com/jhollist/elevatr  
+  - **Remote sensing**: https://github.com/bevingtona/planetR  [to pull remote sensing data from "Planet" satellite]
+  - **Elevation**: https://github.com/jhollist/elevatr [to pull open-source elevation data for open fields to determine how to place blocks in a new farm]  
   
 
 
