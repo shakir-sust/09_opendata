@@ -8,13 +8,15 @@ The practice of finding better representations of predictors (i.e., features) to
 
 In other words, sometimes the predictor variables at hand are not in themselves the best representation to explain a predicted variable.  
 
-In these cases, we can use these original predictor variables to derive new, more informative secondary variables.  
+In these cases, we can use these original predictor variables to derive new, more informative secondary variables. 
+
+[Note: the purpose of feather engineering is to create new predictor variables (aka features) that we already have because the predictors that we already have in hand may not be the best representations of what we are trying to model]
 
 
 # Learning objectives  
 Our learning objectives are to:  
 
-  - Apply feature engineering concepts to Daymet daily weather data    
+  - Apply feature engineering concepts to "Daymet" daily weather data [that we obtained and processed]   
   - Export the feature-engineered data set for further use   
 
 # Setup  
@@ -38,7 +40,17 @@ fieldweather
 
 Our data set contains **254,770** rows (= 698 site-years x 365 days/site-year) comprised by **698** site-years and **365** days/site-year worth of weather data.  
 
-# EDA  
+# EDA [with "summary()" function] 
+
+[ Very important note: 
+
+We always need to do EDA to check that the data at hand **actually makes sense**. For example, if there were any negative value in "prcp_mm_day", it would indicate that something is wrong (e.g., type, difference in NA coding -- for example, some open source databases code NAs as -9999; in that case we need to change all -9999 values as NAs) because precipitation cannot be negative.
+
+EDA also helps us to understand the data distribution of all predictors. For instance, if a dataframe/ variable has data that is normally distributed, the mean and median would be very similar/ pretty close to each other. If we have a right-skewed distribution, the median > mean (because mean is sensitive to outliers, but median is NOT sensitive to outliers). f we have a left-skewed distribution, the median < mean. In this way, we can get a sense of data distribution of each predictors by looking at the EDA results. 
+
+TLDR; EDA with summary() always helps to identify any error in the dataset. 
+
+]
 
 ```{r}
 
@@ -46,12 +58,13 @@ summary(fieldweather)
 
 ```
 
-If a dataframe/ variable has data that is normally distributed, the mean and median would be very similar/ pretty close to each other.  
 
-If we have a right-skewed distribution, the median > mean (because mean is sensitive to outliers, but median is NOT sensitive to outliers)  
 
 
 Let's create some density plots to explore the weather data distributions.  
+
+[Important note: It is always a good practice to create density plot to understand the distribution of the data]
+
 
 ```{r}
 
@@ -85,7 +98,7 @@ One option is "Growing degree days" based on temperature data.
 
 ## Quiz - go to eLC  
 
-How could we use this understanding to create new features from the current ones?  
+How could we use this understanding to create new features from the current ones?  (new features = new predictors)
 
 There are **two components** that we can consider when feature engineering weather data:  
 
@@ -94,8 +107,8 @@ There are **two components** that we can consider when feature engineering weath
   - Monthly  
   - Every 2 months  
   - (Entire) Growing season  
-  - Based on crop growth stages  
-  - Other?  
+  - Based on crop growth stages [if we have planting and harvest date]
+  - Other? [growing degree days based on temperature data]
   
 2. Summarizing **function**  
   - Mean  
