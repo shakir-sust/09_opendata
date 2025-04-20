@@ -145,10 +145,11 @@ fe_month <- fieldweather %>%
                 vp.pa = vp_pa #to rename variable name to "vp.pa"
                 ) %>%
   # Creating a date class variable  
-  mutate(date_chr = paste0(year, "/", yday)) %>% #The format of "date_chr" is "chr", we will change it to "date" format in the next line
-  mutate(date = as.Date(date_chr, "%Y/%j")) %>% #"%Y/%j" because we used "/" in paste0(year, "/", yday) at the previous line #Date-related documnetation details: https://www.r-bloggers.com/2013/08/date-formats-in-r/
+  mutate(date_chr = paste0(year, "/", yday)) %>% #The format of "date_chr" is "chr", we will change it to "date" format when we use "as.Date()" function in the next line
+  mutate(date = as.Date(date_chr, "%Y/%j")) %>% #"%Y/%j" because we used "/" in paste0(year, "/", yday) at the previous line #If instead of using "/" we used "-" in the previous line as "mutate(date_chr = paste0(year, "-", yday))", we would simply use "mutate(date = as.Date(date_chr, "%Y-%j"))" in the current line 
+  #Date-related documentation details: https://www.r-bloggers.com/2013/08/date-formats-in-r/
   # Extracting month from date  
-  mutate(month = month(date)) %>% #the 1st "month" inside mutate is to name the new column, the 2nd "month" after = sign is the month() function from lubridate package #month is in "dbl" (double) format
+  mutate(month = month(date)) %>% #we use month() function to extract only the numerical number of the month as "dbl" format (number of the month e.g., "1" for "January" etc) from an object that has the year/month/date data (i.e., "date" object that we created in the previous line) #the 1st "month" inside mutate is to name the new column, the 2nd "month" after = sign is the month() function from lubridate package #month is in "dbl" (double) format
   mutate(month_abb = month(date, label = T)) #To get abbreviated month name e.g., Jan, Feb, Mar,...,Dec #month_abb is in "ord" (ordinal) format
 
 
@@ -169,11 +170,11 @@ fe_month_sum <- fe_month %>%
                              tmin.c,
                              vp.pa),
                    .fns = mean, #do not indicate the actual function "mean()", just use the word "mean"
-                   .names = "mean_{.col}"), #1st across() is summarizing mean
+                   .names = "mean_{.col}"), #specifying the weather variables that we want their mean as new column variables #1st across() is applying the "mean" function (to summarize "mean")
             across(.cols = prcp.mm,
                    .fns = sum,
                    .names = "sum_{.col}"
-                   ) #2nd across() is summarizing sum
+                   ) #specifying the weather variable (prcp.mm) that we want its sum as new column variable #2nd across() is summarizing sum #2nd across() is applying the "sum" function (to summarize "sum")
             ) %>%
   ungroup() #To convert from "group" to "tibble"
 
@@ -186,7 +187,9 @@ fe_month_sum
 
 8,376 rows because 698 site-years x 12 months.  
 
-Let's check tmax.c and prcp.mm for the first site-year and month. [the following code chunk is to make sure we did everything okay that we intended] 
+Let's check tmax.c and prcp.mm for the first site-year and month. 
+
+[Note: the following code chunk is for double checking to make sure that we did everything okay the way we intended] 
 
 ```{r}
 
