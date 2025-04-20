@@ -281,6 +281,7 @@ finalplots$plot #$plot to print all the ggplots for each variable
 ```
 
 # Exporting  
+
 ```{r}
 
 write_csv(fe_month_sum_wide,
@@ -289,6 +290,7 @@ write_csv(fe_month_sum_wide,
 ```
 
 # Summary  
+
 In this exercise, we:  
   - Imported the original **7** weather variables from Daymet  
   - Feature engineered a total of **72** secondary variables by applying a summarizing window size of **month** and a summarizing function of **mean or sum**.  
