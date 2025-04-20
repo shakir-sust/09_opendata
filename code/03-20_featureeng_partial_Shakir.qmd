@@ -240,20 +240,21 @@ ggplot(data = fe_month_sum,
            )
        ) +
   geom_density_ridges_gradient(scale = 3,
-                               rel_min_height = 0.01) + #"the 2nd argument is"rel_min_height = 0.01": to cut down the tails of the distribution
-  scale_fill_viridis_c(option = "C") + #"viridis"scale_fill_viridis_c()": color-blind-friendly color scale #argument (option = "C") to change the color to magma option; "option = " varies from A to F
-  theme(legend.position = "none") #"theme(legend.position = "none")": to remove legends
+                               rel_min_height = 0.01) + #"the 2nd argument is"rel_min_height = 0.01": to cut down the tails of the distribution to look nice
+  scale_fill_viridis_c(option = "C") + #"viridis"scale_fill_viridis_c()": color-blind-friendly color scale #argument (option = "C") to change the color to "magma" because magma is weather related; "option = " varies from A to F
+  theme(legend.position = "none") #"theme(legend.position = "none")": to remove the legend from the graph
 
 ```
 
-Now let's do that for all variables [ we will automate using map2() to conduct iteration ]
+Now let's do that for all weather variables [ we will automate using map2() to conduct iteration ]
 
 ```{r}
 
 finalplots <- fe_month_sum %>%
-  pivot_longer(mean_dayl.s:sum_prcp.mm) %>%
+  pivot_longer(mean_dayl.s:sum_prcp.mm) %>% #we need to do pivot_longer() to iterate over the weather variables
   group_by(name) %>%
-  nest() %>% #combo of "group_by()" and "nest()"
+  nest() %>% #for iteration, we use "group_by()" followed by "nest()" in combo
+  #we will use map2() since we need to iterate over 2 columns
   mutate(plot = map2(data, name, #map2() takes 2 arguments: the 1st argument becomes .x, the 2nd argument becomes .y #we must use map2() with a mutate() at first for iteration #"map2(data, name" : we want to iterate over "name" for "data"
                      ~ ggplot( data = .x, # .x represent "data" in the map2() function, so we need to use data = .x [= "data" from map2() ] to feed the "data" from map2() function as the data of ggplot() #.x is the iterating column of map2() that is a place holder for the 1st argument of map2()
        aes(x = value,
