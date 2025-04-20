@@ -266,7 +266,7 @@ finalplots <- fe_month_sum %>%
                                rel_min_height = 0.01) + 
   scale_fill_viridis_c(option = "C") + 
   theme(legend.position = "none") +
-  labs(x = .y) #to rename the x-axis as the variable name # .y is the placeholder for "name" i.e., variable name in map2() function
+  labs(x = .y) #to rename the x-axis as the variable name # .y is the placeholder for "name" (i.e., variable name) in map2() function
                      )) 
   
 finalplots
