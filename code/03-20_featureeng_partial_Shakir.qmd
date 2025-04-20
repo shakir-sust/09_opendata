@@ -208,9 +208,9 @@ Now, what if we wanted to have month as part of the column name instead?
 ```{r fe_month_sum_wide}
 
 fe_month_sum_wide <- fe_month_sum %>%
-  pivot_longer(cols = mean_dayl.s:sum_prcp.mm) %>%
+  pivot_longer(cols = mean_dayl.s:sum_prcp.mm) %>% #to pivot_longer all weather variables to get the name of all weather variables in one column (= "name"), while another column contains the abbreviated names of the months (= "month_abb"); we will combine these 2 columns to get a new column which will contain the name of all weather variables with the abbreviated month name appended to each weather variable with an underscore i.e., weathervariable_abbreviatedmonthname
   mutate(varname = paste0(name, "_", month_abb)) %>% #To create a new column "varname" which contains the combination of "name" and "month_abb"
-  dplyr::select(-name, -month_abb) %>% #To remove "name" and "month_abb" columns so that we do not get any "NA" when we pivot_wider()
+  dplyr::select(-name, -month_abb) %>% #to remove "name" and "month_abb" columns from the data frame #If the 2 columns (= name, month_abb) that we used to create a new column are still in the data frame when we do pivot_wider, we will get NAs that we don't want #So, we need to remove "name" and "month_abb" columns so that we do not get any "NA" when we do pivot_wider() 
   pivot_wider(names_from = varname,
               values_from = value) %>%
   # Rounding to one decimal point
